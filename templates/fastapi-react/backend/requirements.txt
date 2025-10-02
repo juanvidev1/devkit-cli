@@ -1,0 +1,14 @@
+
+# FastAPI core
+fastapi[standard]
+
+# Database dependencies (SQLite by default). For Postgres/MySQL add the corresponding async drivers:
+# - Postgres: asyncpg
+# - MySQL: aiomysql
+sqlalchemy
+databases[sqlite]
+aiosqlite
+
+# JWT and password hashing
+python-jose[cryptography]
+passlib[bcrypt]

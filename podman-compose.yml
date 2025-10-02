@@ -1,0 +1,77 @@
+# Podman / podman-compose file to run the FastAPI backend and Vite frontend
+# Usage: run from the project root where this file exists:
+#   podman-compose up --build
+# Notes:
+# - Images use absolute references (docker.io/...) so Podman pulls the correct registry images.
+# - Volume mounts include :Z to set SELinux context when necessary.
+# - This compose file assumes the generated project lives in <project-root>/mi-proyecto or you can
+#   edit the volume paths to point to your generated project folder.
+
+version: "3.8"
+
+services:
+  backend:
+    # Absolute image reference so Podman resolves the registry explicitly
+    image: docker.io/library/python:3.11-slim
+    container_name: "${PROJECT_NAME:-stackforge}_backend"
+    working_dir: /app
+    volumes:
+      # mount the backend folder from the generated project into /app
+      - "${PROJECT_PATH:-./mi-proyecto}/backend:/app:Z"
+    ports:
+      - "8000:8000"
+    # Install requirements and run uvicorn (binding to 0.0.0.0 so external traffic works)
+    command: sh -c "pip install --no-cache-dir -r requirements.txt && uvicorn main:app --host 0.0.0.0 --port 8000"
+    restart: unless-stopped
+
+  frontend:
+    image: docker.io/library/node:20-slim
+    working_dir: /src
+    volumes:
+      - "${PROJECT_PATH:-./mi-proyecto}/frontend:/src:Z"
+    ports:
+      - "5173:5173"
+    # Use the dev server so you have HMR during development; adjust to `npm run build` + a static server for prod
+    command: sh -c "npm install --no-audit --no-fund && npm run dev -- --host 0.0.0.0 --port 5173"
+    container_name: "${PROJECT_NAME:-stackforge}_frontend"
+    restart: unless-stopped
+
+  # Optional Postgres service. Activate with the "postgres" profile:
+  #   podman-compose --profile postgres up --build
+  postgres:
+    image: docker.io/library/postgres:15
+    container_name: "${PROJECT_NAME:-stackforge}_postgres"
+    environment:
+      POSTGRES_USER: "${POSTGRES_USER:-user}"
+      POSTGRES_PASSWORD: "${POSTGRES_PASSWORD:-password}"
+      POSTGRES_DB: "${POSTGRES_DB:-mydb}"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data:Z
+    ports:
+      - "5432:5432"
+    restart: unless-stopped
+    profiles:
+      - postgres
+
+  # Optional MySQL service. Activate with the "mysql" profile:
+  #   podman-compose --profile mysql up --build
+  mysql:
+    image: docker.io/library/mysql:8
+    container_name: "${PROJECT_NAME:-stackforge}_mysql"
+    environment:
+      MYSQL_ROOT_PASSWORD: "${MYSQL_ROOT_PASSWORD:-rootpass}"
+      MYSQL_DATABASE: "${MYSQL_DATABASE:-mydb}"
+      MYSQL_USER: "${MYSQL_USER:-user}"
+      MYSQL_PASSWORD: "${MYSQL_PASSWORD:-password}"
+    volumes:
+      - mysql_data:/var/lib/mysql:Z
+    ports:
+      - "3306:3306"
+    restart: unless-stopped
+    profiles:
+      - mysql
+# Optionally you can add a network section here. podman-compose will create a network by default.
+
+volumes:
+  postgres_data: {}
+  mysql_data: {}
