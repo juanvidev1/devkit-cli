@@ -39,3 +39,15 @@ data.db
 
 # Build
 build/
+
+# Pruebas
+prueba/
+pruebas/
+test/
+tests/
+*.test.js
+*.spec.js
+*.test.py
+*.spec.py
+__tests__/
+__mocks__/
