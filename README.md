@@ -1,6 +1,6 @@
 # Stackforge CLI
 
-Generador de proyectos fullstack con FastAPI + React, base de datos y soporte para Podman.
+Generador profesional de proyectos fullstack con FastAPI + React o Express + Vue, soporte para múltiples bases de datos y despliegue con Podman.
 
 ## Instalación
 
@@ -31,10 +31,10 @@ stackforge create --skip-questions
 
 ## ¿Qué genera?
 
-- Backend FastAPI listo para usar (con opción de JWT demo y base de datos a elegir)
-- Frontend React (con Vite, o plantilla base)
+- Backend FastAPI (Python) o Express (Node.js), ambos con CRUD de ejemplo, autenticación JWT opcional y soporte para SQLite, Postgres, MySQL o MongoDB
+- Frontend React (Vite) o Vue (Vite), con ejemplo de login, CRUD y consumo de rutas protegidas
 - Archivos de configuración para desarrollo local y contenedores (Podman)
-- `.gitignore` para cada parte del stack
+- `.gitignore` y estructura profesional para cada parte del stack
 
 ## Requisitos
 
@@ -59,13 +59,27 @@ podman-compose up --build
 
 ## Personalización
 
-- Elige base de datos: SQLite, Postgres o MySQL
-- Incluye o no autenticación JWT demo
-- Usa el instalador oficial de Vite para el frontend si lo deseas
+### Personalización avanzada
+
+Al crear un proyecto, podrás elegir:
+
+- **Stack**: FastAPI + React o Express + Vue
+- **Base de datos**: SQLite, Postgres, MySQL o MongoDB
+  - Para SQLite no se solicita información adicional
+  - Para Postgres/MySQL: host, puerto, usuario, contraseña y nombre de la base
+  - Para MongoDB: puedes ingresar una URI completa o los datos por separado
+- **Autenticación JWT**: puedes incluir o no un ejemplo de autenticación
+- **Frontend**: usar el instalador oficial de Vite o la plantilla base
+
+> **Nota:** El generador crea archivos `.env` y requirements/configs listos para cada stack y base de datos.
 
 ## Contribuir
 
 ¡Pull requests y sugerencias son bienvenidas!
+
+---
+
+Plantilla generada por [stackforge-cli](https://www.npmjs.com/package/stackforge-cli)
 
 ---
 

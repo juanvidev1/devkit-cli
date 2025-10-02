@@ -104,40 +104,70 @@ program
       if (dbType === "sqlite") {
         dbUrl = "sqlite+aiosqlite:///./data.db";
       } else if (dbType === "mongodb") {
-        // MongoDB URL
-        const mongoCreds = await inquirer.prompt([
+        // Preguntar si quiere ingresar una URI completa o los datos por separado
+        const { mongoInputType } = await inquirer.prompt([
           {
-            type: "input",
-            name: "host",
-            message: "Mongo host:",
-            default: "localhost",
-          },
-          {
-            type: "input",
-            name: "port",
-            message: "Mongo port:",
-            default: "27017",
-          },
-          {
-            type: "input",
-            name: "user",
-            message: "Mongo user:",
-            default: "user",
-          },
-          {
-            type: "password",
-            name: "password",
-            message: "Mongo password:",
-            mask: "*",
-          },
-          {
-            type: "input",
-            name: "database",
-            message: "Mongo database:",
-            default: "mydb",
+            type: "list",
+            name: "mongoInputType",
+            message: "¿Cómo quieres ingresar la configuración de MongoDB?",
+            choices: [
+              {
+                name: "Ingresar URI completa (recomendado si ya la tienes)",
+                value: "uri",
+              },
+              {
+                name: "Ingresar host, puerto, usuario, contraseña y base de datos por separado",
+                value: "separado",
+              },
+            ],
+            default: "uri",
           },
         ]);
-        dbUrl = `mongodb://${mongoCreds.user}:${encodeURIComponent(mongoCreds.password)}@${mongoCreds.host}:${mongoCreds.port}/${mongoCreds.database}`;
+        if (mongoInputType === "uri") {
+          const { mongoUri } = await inquirer.prompt([
+            {
+              type: "input",
+              name: "mongoUri",
+              message: "Ingresa la URI de conexión de MongoDB:",
+              default: "mongodb://user:password@localhost:27017/mydb",
+            },
+          ]);
+          dbUrl = mongoUri;
+        } else {
+          const mongoCreds = await inquirer.prompt([
+            {
+              type: "input",
+              name: "host",
+              message: "Mongo host:",
+              default: "localhost",
+            },
+            {
+              type: "input",
+              name: "port",
+              message: "Mongo port:",
+              default: "27017",
+            },
+            {
+              type: "input",
+              name: "user",
+              message: "Mongo user:",
+              default: "user",
+            },
+            {
+              type: "password",
+              name: "password",
+              message: "Mongo password:",
+              mask: "*",
+            },
+            {
+              type: "input",
+              name: "database",
+              message: "Mongo database:",
+              default: "mydb",
+            },
+          ]);
+          dbUrl = `mongodb://${mongoCreds.user}:${encodeURIComponent(mongoCreds.password)}@${mongoCreds.host}:${mongoCreds.port}/${mongoCreds.database}`;
+        }
       } else {
         // ask credentials for remote DBs
         const dbCreds = await inquirer.prompt([
