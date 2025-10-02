@@ -2,7 +2,11 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI
 
 from app.api import hello, items
-from app.api import auth
+try:
+    from app.api import auth
+    _has_auth = True
+except ImportError:
+    _has_auth = False
 from app.db import connect, disconnect, create_tables
 
 
@@ -23,9 +27,11 @@ async def lifespan(app: FastAPI):
 
 app = FastAPI(title="FastAPI + React (MVP)", lifespan=lifespan)
 
+
 app.include_router(hello.router)
 app.include_router(items.router)
-app.include_router(auth.router)
+if _has_auth:
+    app.include_router(auth.router)
 
 
 @app.get("/health")
