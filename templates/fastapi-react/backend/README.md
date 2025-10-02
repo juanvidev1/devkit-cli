@@ -34,6 +34,12 @@ export DATABASE_URL="postgresql+asyncpg://user:password@db-host:5432/dbname"
 export DATABASE_URL="mysql+aiomysql://user:password@db-host:3306/dbname"
 ```
 
-If you want to use Postgres or MySQL with the template, make sure to add the corresponding async driver
-to `requirements.txt` (e.g. `asyncpg` for Postgres, `aiomysql` for MySQL) or enable `runInstall` in the generator
+- MongoDB (example):
+
+```bash
+export DATABASE_URL="mongodb://user:password@db-host:27017/dbname"
+```
+
+If you want to use Postgres, MySQL, or MongoDB with the template, make sure to add the corresponding async driver
+to `requirements.txt` (e.g. `asyncpg` for Postgres, `aiomysql` for MySQL, `motor` for MongoDB) or enable `runInstall` in the generator
 so the generator can install them for you.

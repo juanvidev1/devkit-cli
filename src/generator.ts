@@ -66,6 +66,47 @@ export async function generateFastapiReact(
       recursive: true,
     });
 
+    // --- DB TYPE LOGIC ---
+    const dbType = options.dbType || "sqlite";
+    if (dbType === "mongodb") {
+      // Mongo: reemplazar db.py por db_mongo.py, items por items_mongo, y api/items por api/items_mongo
+      await fs.remove(path.join(fullTarget, "backend/app/db.py"));
+      await fs.copy(
+        path.join(fullTarget, "backend/app/db_mongo.py"),
+        path.join(fullTarget, "backend/app/db.py"),
+        { overwrite: true }
+      );
+      await fs.remove(path.join(fullTarget, "backend/app/models/items.py"));
+      await fs.copy(
+        path.join(fullTarget, "backend/app/models/items_mongo.py"),
+        path.join(fullTarget, "backend/app/models/items.py"),
+        { overwrite: true }
+      );
+      await fs.remove(path.join(fullTarget, "backend/app/api/items.py"));
+      await fs.copy(
+        path.join(fullTarget, "backend/app/api/items_mongo.py"),
+        path.join(fullTarget, "backend/app/api/items.py"),
+        { overwrite: true }
+      );
+      // Ajustar main.py: importar db, items y quitar create_tables
+      const mainPath = path.join(fullTarget, "backend/main.py");
+      if (await fs.pathExists(mainPath)) {
+        let mainText = await fs.readFile(mainPath, "utf8");
+        // Quitar create_tables y referencias a SQL
+        mainText = mainText.replace(/, create_tables/g, "");
+        mainText = mainText.replace(/\n\s*await create_tables\(\)\;?/g, "");
+        await fs.writeFile(mainPath, mainText, "utf8");
+      }
+      // Añadir motor a requirements.txt si no está
+      const reqPath = path.join(fullTarget, "backend/requirements.txt");
+      if (await fs.pathExists(reqPath)) {
+        let reqText = await fs.readFile(reqPath, "utf8");
+        if (!/motor/.test(reqText)) {
+          reqText += "\nmotor\n";
+          await fs.writeFile(reqPath, reqText, "utf8");
+        }
+      }
+    }
     // Si el usuario NO quiere JWT, elimina archivos y dependencias JWT
     if (!options.useJwt) {
       // Eliminar archivos JWT
@@ -85,8 +126,8 @@ export async function generateFastapiReact(
       if (await fs.pathExists(mainPath)) {
         let mainText = await fs.readFile(mainPath, "utf8");
         mainText = mainText
-          .replace(/from app\.api import auth\n/, "")
-          .replace(/app\.include_router\(auth\.router\)\n/, "");
+          .replace(/from app\\.api import auth\n/, "")
+          .replace(/app\\.include_router\\(auth\\.router\\)\n/, "");
         await fs.writeFile(mainPath, mainText, "utf8");
       }
     } else {

@@ -69,6 +69,7 @@ program
             { name: "SQLite (local, por defecto)", value: "sqlite" },
             { name: "Postgres", value: "postgres" },
             { name: "MySQL", value: "mysql" },
+            { name: "MongoDB", value: "mongodb" },
           ],
           default: "sqlite",
         },
@@ -102,6 +103,41 @@ program
       dbType = answers.dbType || "sqlite";
       if (dbType === "sqlite") {
         dbUrl = "sqlite+aiosqlite:///./data.db";
+      } else if (dbType === "mongodb") {
+        // MongoDB URL
+        const mongoCreds = await inquirer.prompt([
+          {
+            type: "input",
+            name: "host",
+            message: "Mongo host:",
+            default: "localhost",
+          },
+          {
+            type: "input",
+            name: "port",
+            message: "Mongo port:",
+            default: "27017",
+          },
+          {
+            type: "input",
+            name: "user",
+            message: "Mongo user:",
+            default: "user",
+          },
+          {
+            type: "password",
+            name: "password",
+            message: "Mongo password:",
+            mask: "*",
+          },
+          {
+            type: "input",
+            name: "database",
+            message: "Mongo database:",
+            default: "mydb",
+          },
+        ]);
+        dbUrl = `mongodb://${mongoCreds.user}:${encodeURIComponent(mongoCreds.password)}@${mongoCreds.host}:${mongoCreds.port}/${mongoCreds.database}`;
       } else {
         // ask credentials for remote DBs
         const dbCreds = await inquirer.prompt([
@@ -131,7 +167,6 @@ program
             default: "mydb",
           },
         ]);
-
         if (dbType === "postgres") {
           dbUrl = `postgresql+asyncpg://${dbCreds.user}:${encodeURIComponent(dbCreds.password)}@${dbCreds.host}:${dbCreds.port}/${dbCreds.database}`;
         } else {
@@ -156,62 +191,6 @@ program
           dbType,
           useJwt,
         });
-        // If user requested podman up, try to run podman-compose with sensible env vars
-        if (options.withPodman) {
-          // Lazy import child_process
-          const { spawn } = await import("child_process");
-
-          console.log(
-            "🔧 Iniciando podman-compose para levantar el proyecto (se necesita podman & podman-compose)..."
-          );
-
-          // Build env vars for podman-compose
-          const env = {
-            ...process.env,
-            PROJECT_NAME: projectName,
-            PROJECT_PATH: targetPath,
-          } as NodeJS.ProcessEnv;
-
-          if (dbType && dbType !== "sqlite") {
-            // map common defaults if user selected a remote DB
-            if (dbType === "postgres") {
-              env.POSTGRES_USER = env.POSTGRES_USER ?? "user";
-              env.POSTGRES_PASSWORD = env.POSTGRES_PASSWORD ?? "password";
-              env.POSTGRES_DB = env.POSTGRES_DB ?? "mydb";
-            } else if (dbType === "mysql") {
-              env.MYSQL_USER = env.MYSQL_USER ?? "user";
-              env.MYSQL_PASSWORD = env.MYSQL_PASSWORD ?? "password";
-              env.MYSQL_DATABASE = env.MYSQL_DATABASE ?? "mydb";
-              env.MYSQL_ROOT_PASSWORD = env.MYSQL_ROOT_PASSWORD ?? "rootpass";
-            }
-          }
-
-          // Decide profile to use
-          const profile =
-            dbType === "postgres"
-              ? "postgres"
-              : dbType === "mysql"
-                ? "mysql"
-                : undefined;
-
-          const args = [] as string[];
-          if (profile) {
-            args.push("--profile", profile);
-          }
-          args.push("up", "--build");
-
-          const child = spawn("podman-compose", args, {
-            cwd: targetPath,
-            env,
-            stdio: "inherit",
-            shell: false,
-          });
-
-          child.on("close", (code) => {
-            if (code !== 0)
-              console.warn(`podman-compose exited with code ${code}`);
-          });
-        }
       } catch (err: any) {
         console.error("❌ Error al generar la plantilla:", err.message || err);
         process.exit(1);

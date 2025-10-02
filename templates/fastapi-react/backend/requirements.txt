@@ -9,6 +9,10 @@ sqlalchemy
 databases[sqlite]
 aiosqlite
 
+
 # JWT and password hashing
 python-jose[cryptography]
 passlib[bcrypt]
+
+# MongoDB (opcional)
+motor
