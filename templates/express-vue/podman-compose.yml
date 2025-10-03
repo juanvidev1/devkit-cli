@@ -1,12 +1,10 @@
-version: "3.8"
-
 services:
   backend:
     image: docker.io/library/node:20-slim
     container_name: "${PROJECT_NAME:-express-vue}_backend"
     working_dir: /app
     volumes:
-      - ./backend/app:/app:Z
+      - ./backend/app:/app
     ports:
       - "5002:5002"
     command: sh -c "rm -rf node_modules package-lock.json && npm cache clean --force && npm install --no-audit --no-fund && npm start"
@@ -19,7 +17,7 @@ services:
     container_name: "${PROJECT_NAME:-express-vue}_frontend"
     working_dir: /src
     volumes:
-      - ./frontend:/src:Z
+      - ./frontend:/src
     ports:
       - "5173:5173"
     command: sh -c "rm -rf node_modules package-lock.json && npm cache clean --force && npm install --no-audit --no-fund && npm run dev -- --host 0.0.0.0 --port 5173"
@@ -35,7 +33,7 @@ services:
       POSTGRES_PASSWORD: "${POSTGRES_PASSWORD:-password}"
       POSTGRES_DB: "${POSTGRES_DB:-mydb}"
     volumes:
-      - postgres_data:/var/lib/postgresql/data:Z
+      - postgres_data:/var/lib/postgresql/data
     ports:
       - "5432:5432"
     restart: unless-stopped
@@ -51,7 +49,7 @@ services:
       MYSQL_USER: "${MYSQL_USER:-user}"
       MYSQL_PASSWORD: "${MYSQL_PASSWORD:-password}"
     volumes:
-      - mysql_data:/var/lib/mysql:Z
+      - mysql_data:/var/lib/mysql
     ports:
       - "3306:3306"
     restart: unless-stopped
@@ -66,7 +64,7 @@ services:
       MONGO_INITDB_ROOT_PASSWORD: "${MONGO_INITDB_ROOT_PASSWORD:-password}"
       MONGO_INITDB_DATABASE: "${MONGO_INITDB_DATABASE:-mydb}"
     volumes:
-      - mongo_data:/data/db:Z
+      - mongo_data:/data/db
     ports:
       - "27017:27017"
     restart: unless-stopped
