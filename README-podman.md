@@ -1,9 +1,9 @@
-Podman quick start (development)
+## Podman quick start (development)
 
-This repository includes `podman-compose.yml` which defines two services:
+This repository includes a `podman-compose.yml` file which defines two services:
 
-- `backend` — runs a Python image, installs requirements and launches uvicorn on port 8000
-- `frontend` — runs Node, installs dependencies and launches Vite dev server on port 5173
+- `backend` — runs a Python image, installs requirements, and launches uvicorn on port 8000
+- `frontend` — runs Node, installs dependencies, and launches the Vite dev server on port 5173
 
 Usage (from project root):
 
@@ -22,9 +22,9 @@ Notes:
 
 - The compose file uses absolute image references like `docker.io/library/python:3.11-slim` to be explicit for Podman.
 - Volume mounts include `:Z` so SELinux contexts are set appropriately when necessary.
-- If your generated project is not in `./mi-proyecto`, edit `podman-compose.yml` to point volumes to the correct path.
+- If your generated project is not in `./my-project`, edit `podman-compose.yml` to point volumes to the correct path.
 
-Using a database (Postgres / MySQL)
+### Using a database (Postgres / MySQL)
 
 This compose file includes optional database services that are activated via profiles.
 
@@ -40,7 +40,7 @@ podman-compose --profile postgres up --build
 podman-compose --profile mysql up --build
 ```
 
-By default the Postgres service exposes port 5432 and is configured with:
+By default, the Postgres service exposes port 5432 and is configured with:
 
 - POSTGRES_USER=user
 - POSTGRES_PASSWORD=password

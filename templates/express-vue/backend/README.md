@@ -1,48 +1,48 @@
 # Backend (Express + JWT + CRUD + Multi-DB)
 
-> Servidor Express profesional con autenticación JWT, CRUD de items y soporte para SQLite, MySQL, Postgres y MongoDB.
+> Professional Express server with JWT authentication, items CRUD, and support for SQLite, MySQL, Postgres, and MongoDB.
 
-## Instalación y uso
+## Installation & Usage
 
-1. Copia el archivo de ejemplo de variables de entorno:
+1. Copy the example environment variables file:
    ```bash
    cp .env.example .env
-   # Edita .env según la base de datos que vayas a usar
+   # Edit .env according to the database you want to use
    ```
-2. Instala dependencias:
+2. Install dependencies:
    ```bash
    npm install
    ```
-3. Inicia el servidor:
+3. Start the server:
    ```bash
    npm start
    ```
 
-El backend se ejecutará en http://localhost:3000
+The backend will run at http://localhost:3000
 
-## Endpoints principales
+## Main Endpoints
 
-- `POST /auth/login` — Login JWT (usuario demo: demo, password: password)
-- `GET /items` — Listar items
-- `POST /items` — Crear item
-- `PUT /items/:id` — Actualizar item
-- `DELETE /items/:id` — Eliminar item
-- `GET /protected/me` — Ruta protegida (requiere token JWT)
+- `POST /auth/login` — JWT login (demo user: demo, password: password)
+- `GET /items` — List items
+- `POST /items` — Create item
+- `PUT /items/:id` — Update item
+- `DELETE /items/:id` — Delete item
+- `GET /protected/me` — Protected route (requires JWT token)
 
-## Configuración de base de datos
+## Database configuration
 
-Selecciona el motor de base de datos con la variable `DB_TYPE` en tu `.env`:
+Select the database engine with the `DB_TYPE` variable in your `.env`:
 
-| DB_TYPE  | Variables requeridas                                                                 |
-| -------- | ------------------------------------------------------------------------------------ |
-| sqlite   | SQLITE_FILE (opcional, por defecto ./data.db)                                        |
-| mysql    | MYSQL_HOST, MYSQL_PORT, MYSQL_USER, MYSQL_PASSWORD, MYSQL_DATABASE                   |
-| postgres | PG_HOST, PG_PORT, PG_USER, PG_PASSWORD, PG_DATABASE                                  |
-| mongo    | MONGO_URI (o variables para construir la URI: usuario, password, host, puerto, base) |
+| DB_TYPE  | Required variables                                                              |
+| -------- | ------------------------------------------------------------------------------- |
+| sqlite   | SQLITE_FILE (optional, default ./data.db)                                       |
+| mysql    | MYSQL_HOST, MYSQL_PORT, MYSQL_USER, MYSQL_PASSWORD, MYSQL_DATABASE              |
+| postgres | PG_HOST, PG_PORT, PG_USER, PG_PASSWORD, PG_DATABASE                             |
+| mongo    | MONGO_URI (or variables to build the URI: user, password, host, port, database) |
 
-Ejemplos de configuración en `.env`:
+Examples for `.env`:
 
-### SQLite (por defecto)
+### SQLite (default)
 
 ```
 DB_TYPE=sqlite

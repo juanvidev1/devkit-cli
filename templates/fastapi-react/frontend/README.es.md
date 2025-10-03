@@ -1,6 +1,6 @@
 # Frontend (Vite + React)
 
-Run the development server:
+Ejecuta el servidor de desarrollo:
 
 ```bash
 npm install
