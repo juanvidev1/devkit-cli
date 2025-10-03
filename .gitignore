@@ -43,6 +43,10 @@ build/
 # Pruebas
 prueba/
 pruebas/
+*prueba*/
+**/prueba/
+**/*prueba*/
+**/*prueba*/**
 test/
 tests/
 *.test.js
