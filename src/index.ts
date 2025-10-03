@@ -4,7 +4,7 @@
 import { Command } from "commander";
 import inquirer from "inquirer";
 import path from "path";
-import generateFastapiReact from "./generator";
+import generateFastapiReact, { generateExpressVue } from "./generator";
 
 // Creamos una nueva instancia de Command
 // Esta será la base de nuestro CLI
@@ -214,6 +214,20 @@ program
     if (templateType === "fastapi-react") {
       try {
         await generateFastapiReact(targetPath, {
+          projectName,
+          useViteInstaller,
+          runInstall,
+          dbUrl,
+          dbType,
+          useJwt,
+        });
+      } catch (err: any) {
+        console.error("❌ Error al generar la plantilla:", err.message || err);
+        process.exit(1);
+      }
+    } else if (templateType === "nodejs-vue") {
+      try {
+        await generateExpressVue(targetPath, {
           projectName,
           useViteInstaller,
           runInstall,

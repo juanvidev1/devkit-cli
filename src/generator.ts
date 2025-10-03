@@ -1,3 +1,154 @@
+/**
+ * Genera un backend Express y un frontend Vue (Vite) en targetDir.
+ * Replica la lógica de generateFastapiReact pero usando la plantilla express-vue.
+ */
+export async function generateExpressVue(
+  targetDir: string,
+  options: GeneratorOptions = {}
+) {
+  const name = options.projectName ?? path.basename(path.resolve(targetDir));
+  const fullTarget = path.resolve(targetDir);
+
+  // Crear directorio raíz
+  await fs.ensureDir(fullTarget);
+  // Rutas backend/frontend
+  const backendDir = path.join(fullTarget, "backend");
+  const frontendDir = path.join(fullTarget, "frontend");
+
+  // Copiar desde templates si existen
+  const templatesRoot = path.resolve(
+    __dirname,
+    "..",
+    "templates",
+    "express-vue"
+  );
+  const templatesExist = await fs.pathExists(templatesRoot);
+
+  if (templatesExist) {
+    console.log(
+      `ℹ️  Plantillas encontradas en ${templatesRoot} — copiando al destino...`
+    );
+    await fs.copy(templatesRoot, fullTarget, {
+      overwrite: true,
+      recursive: true,
+    });
+
+    // --- Lógica de tipo de BD ---
+    const dbType = options.dbType || "sqlite";
+    if (dbType === "mongodb") {
+      // Mongo: reemplazar db.js por db_mongo.js, items.js por items_mongo.js
+      await fs.remove(path.join(fullTarget, "backend/db.js"));
+      await fs.copy(
+        path.join(fullTarget, "backend/db_mongo.js"),
+        path.join(fullTarget, "backend/db.js"),
+        { overwrite: true }
+      );
+      await fs.remove(path.join(fullTarget, "backend/items.js"));
+      await fs.copy(
+        path.join(fullTarget, "backend/items_mongo.js"),
+        path.join(fullTarget, "backend/items.js"),
+        { overwrite: true }
+      );
+      // Ajustar package.json: añadir dependencia mongodb si no está
+      const pkgPath = path.join(fullTarget, "backend/package.json");
+      if (await fs.pathExists(pkgPath)) {
+        let pkg = await fs.readJSON(pkgPath);
+        if (!pkg.dependencies) pkg.dependencies = {};
+        if (!pkg.dependencies["mongodb"]) {
+          pkg.dependencies["mongodb"] = "^5.7.0";
+          await fs.writeJSON(pkgPath, pkg, { spaces: 2 });
+        }
+      }
+    }
+    // Si el usuario NO quiere JWT, elimina archivos y dependencias JWT
+    if (!options.useJwt) {
+      // Eliminar archivos JWT
+      await fs.remove(path.join(fullTarget, "backend/auth.js"));
+      // Quitar dependencias JWT de package.json
+      const pkgPath = path.join(fullTarget, "backend/package.json");
+      if (await fs.pathExists(pkgPath)) {
+        let pkg = await fs.readJSON(pkgPath);
+        if (pkg.dependencies && pkg.dependencies["jsonwebtoken"]) {
+          delete pkg.dependencies["jsonwebtoken"];
+          await fs.writeJSON(pkgPath, pkg, { spaces: 2 });
+        }
+      }
+      // Eliminar import y uso de auth en index.js
+      const indexPath = path.join(fullTarget, "backend/index.js");
+      if (await fs.pathExists(indexPath)) {
+        let indexText = await fs.readFile(indexPath, "utf8");
+        indexText = indexText.replace(
+          /const auth = require\("\.\/auth"\);\n/,
+          ""
+        );
+        indexText = indexText.replace(/app\.use\("\/auth", auth\);\n/, "");
+        await fs.writeFile(indexPath, indexText, "utf8");
+      }
+    }
+    // Si el usuario quiere JWT, añade endpoint protegido de ejemplo (ya está en la plantilla)
+
+    // Si el usuario proporcionó dbUrl, escribir .env
+    if (options.dbUrl) {
+      try {
+        const envPath = path.join(fullTarget, "backend/.env");
+        await fs.writeFile(envPath, `DATABASE_URL=${options.dbUrl}\n`, "utf8");
+        console.log(`ℹ️  Escribiendo DATABASE_URL en ${envPath}`);
+      } catch (err) {
+        console.warn("⚠️  No se pudo escribir .env en el backend:", err);
+      }
+      // Añadir driver a package.json si es necesario
+      try {
+        const pkgPath = path.join(fullTarget, "backend/package.json");
+        let pkg: any = {};
+        if (await fs.pathExists(pkgPath)) {
+          pkg = await fs.readJSON(pkgPath);
+        }
+        // Aseguramos que dependencies existe y es objeto
+        if (!pkg.dependencies || typeof pkg.dependencies !== "object") {
+          pkg.dependencies = {};
+        }
+        const wants = options.dbType || "sqlite";
+        if (wants === "postgres") {
+          if (!pkg.dependencies["pg"]) pkg.dependencies["pg"] = "^8.11.3";
+        } else if (wants === "mysql") {
+          if (!pkg.dependencies["mysql2"])
+            pkg.dependencies["mysql2"] = "^3.9.7";
+        } else if (wants === "mongodb") {
+          if (!pkg.dependencies["mongodb"])
+            pkg.dependencies["mongodb"] = "^5.7.0";
+        } else {
+          if (!pkg.dependencies["sqlite3"])
+            pkg.dependencies["sqlite3"] = "^5.1.6";
+        }
+        await fs.writeJSON(pkgPath, pkg, { spaces: 2 });
+      } catch (err) {
+        console.warn(
+          "⚠️  No se pudo actualizar package.json con drivers de DB:",
+          err
+        );
+      }
+    }
+  }
+
+  // Instalar dependencias si se solicita
+  if (options.runInstall) {
+    console.log("ℹ️  Instalando dependencias del frontend (npm install) ...");
+    await runCommand("npm", ["install"], frontendDir);
+    try {
+      console.log("ℹ️  Instalando dependencias del backend (npm install) ...");
+      await runCommand("npm", ["install"], backendDir);
+    } catch (err) {
+      console.warn(
+        "⚠️  No se pudo instalar dependencias de Node automáticamente:",
+        err.message
+      );
+    }
+  }
+
+  console.log(`\n✅ Plantilla generada en: ${fullTarget}`);
+  console.log(` - Backend: ${path.relative(process.cwd(), backendDir)}`);
+  console.log(` - Frontend: ${path.relative(process.cwd(), frontendDir)}`);
+}
 import path from "path";
 import fs from "fs-extra";
 import { spawn } from "child_process";
