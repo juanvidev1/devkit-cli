@@ -1,6 +1,6 @@
 {
   "name": "devkit-cli",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "Professional fullstack project generator CLI (FastAPI + React, Express + Vue, multi-db, Docker/Podman ready)",
   "main": "dist/index.js",
   "bin": {
