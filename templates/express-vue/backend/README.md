@@ -86,4 +86,4 @@ MONGO_URI=mongodb://user:password@localhost:27017/mydb
 
 ---
 
-Plantilla generada por [stackforge-cli](https://www.npmjs.com/package/stackforge-cli)
+Plantilla generada por [devkit-cli](https://www.npmjs.com/package/devkit-cli)

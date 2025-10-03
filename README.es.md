@@ -1,4 +1,4 @@
-# Stackforge CLI
+# Devkit CLI
 
 Generador profesional de proyectos fullstack con FastAPI + React o Express + Vue, soporte para múltiples bases de datos y despliegue con Podman o Docker.
 
@@ -7,7 +7,7 @@ Generador profesional de proyectos fullstack con FastAPI + React o Express + Vue
 Instala el CLI globalmente desde npm:
 
 ```sh
-npm install -g stackforge-cli
+npm install -g devkit-cli
 ```
 
 ## Uso rápido
@@ -15,13 +15,13 @@ npm install -g stackforge-cli
 Crea un nuevo proyecto de forma interactiva:
 
 ```sh
-stackforge create
+devkit create
 ```
 
 O salta las preguntas y usa valores por defecto:
 
 ```sh
-stackforge create --skip-questions
+devkit create --skip-questions
 ```
 
 ### Opciones principales
@@ -46,7 +46,7 @@ stackforge create --skip-questions
 
 ```sh
 # 1. Crea el proyecto
-stackforge create
+devkit create
 
 # 2. Entra a la carpeta generada
 cd mi-proyecto
@@ -77,7 +77,7 @@ Este MVP está cerrado a contribuciones externas por ahora. ¡Sugerencias y feed
 
 ---
 
-Plantilla generada por [stackforge-cli](https://www.npmjs.com/package/stackforge-cli)
+Plantilla generada por [devkit-cli](https://www.npmjs.com/package/devkit-cli)
 
 ---
 

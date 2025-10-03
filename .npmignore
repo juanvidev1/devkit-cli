@@ -1,0 +1,10 @@
+src/
+tsconfig.json
+*.ts
+*.tsx
+*.map
+.prettier*
+.gitignore
+.vscode/
+README.es.md
+README-podman.md

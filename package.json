@@ -1,18 +1,42 @@
 {
-  "name": "stackforge-cli",
-  "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "name": "devkit-cli",
+  "version": "1.0.2",
+  "description": "Professional fullstack project generator CLI (FastAPI + React, Express + Vue, multi-db, Docker/Podman ready)",
+  "main": "dist/index.js",
+  "bin": {
+    "devkit": "dist/index.js"
+  },
   "scripts": {
     "start": "ts-node src/index.ts",
+    "dev": "ts-node src/index.ts",
     "build": "tsc",
     "prepare": "npm run build",
     "format": "prettier --write .",
     "format:check": "prettier --check ."
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
+  "keywords": [
+    "cli",
+    "generator",
+    "fullstack",
+    "fastapi",
+    "react",
+    "express",
+    "vue",
+    "docker",
+    "podman"
+  ],
+  "author": "juanvidev1",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/juanvidev1/devkit-cli.git"
+  },
+  "files": [
+    "dist/",
+    "templates/",
+    "README.md",
+    "README.es.md"
+  ],
   "dependencies": {
     "commander": "^14.0.1",
     "ejs": "^3.1.10",

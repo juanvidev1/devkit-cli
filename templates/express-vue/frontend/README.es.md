@@ -37,4 +37,4 @@ VITE_API_URL=http://localhost:3000
 
 ---
 
-Plantilla generada por [stackforge-cli](https://www.npmjs.com/package/stackforge-cli)
+Plantilla generada por [devkit-cli](https://www.npmjs.com/package/devkit-cli)

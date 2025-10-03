@@ -1,3 +1,5 @@
+#! /usr/bin/env node
+
 // Importamos las librerías necesarias
 /// <reference types="node" />
 // Commander.js: Para crear CLIs con comandos, opciones y argumentos
