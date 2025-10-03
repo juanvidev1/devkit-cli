@@ -47,6 +47,11 @@ pruebas/
 **/prueba/
 **/*prueba*/
 **/*prueba*/**
+mi-proyecto/
+mi_proyecto*/
+mi-proyecto*/**
+mi_proyecto*/**/
+mi-proyecto*/
 test/
 tests/
 *.test.js

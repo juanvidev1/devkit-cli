@@ -4,11 +4,11 @@ services:
   backend:
     image: docker.io/library/node:20-slim
     container_name: "${PROJECT_NAME:-express-vue}_backend"
-    working_dir: /
+    working_dir: /app
     volumes:
       - ./backend/app:/app:Z
     ports:
-      - "5000:5000"
+      - "5002:5002"
     command: sh -c "rm -rf node_modules package-lock.json && npm cache clean --force && npm install --no-audit --no-fund && npm start"
     restart: unless-stopped
     env_file:

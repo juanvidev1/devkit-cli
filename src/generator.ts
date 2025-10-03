@@ -1,3 +1,4 @@
+/// <reference types="node" />
 /**
  * Genera un backend Express y un frontend Vue (Vite) en targetDir.
  * Replica la lógica de generateFastapiReact pero usando la plantilla express-vue.
@@ -25,6 +26,27 @@ export async function generateExpressVue(
   const templatesExist = await fs.pathExists(templatesRoot);
 
   if (templatesExist) {
+    // Copiar el archivo de compose adecuado
+    if (options.composeTool === "podman") {
+      const podmanComposePath = path.join(templatesRoot, "podman-compose.yml");
+      if (await fs.pathExists(podmanComposePath)) {
+        await fs.copy(
+          podmanComposePath,
+          path.join(fullTarget, "podman-compose.yml"),
+          { overwrite: true }
+        );
+      }
+    } else {
+      // Por defecto docker
+      const dockerComposePath = path.join(templatesRoot, "docker-compose.yml");
+      if (await fs.pathExists(dockerComposePath)) {
+        await fs.copy(
+          dockerComposePath,
+          path.join(fullTarget, "docker-compose.yml"),
+          { overwrite: true }
+        );
+      }
+    }
     console.log(
       `ℹ️  Plantillas encontradas en ${templatesRoot} — copiando al destino...`
     );
@@ -160,6 +182,7 @@ export type GeneratorOptions = {
   dbUrl?: string; // optional DATABASE_URL to write into backend/.env
   dbType?: string; // optional db type: sqlite | postgres | mysql
   useJwt?: boolean; // if true, include JWT auth example
+  composeTool?: "docker" | "podman";
 };
 
 async function runCommand(cmd: string, args: string[], cwd?: string) {
@@ -208,6 +231,27 @@ export async function generateFastapiReact(
   const templatesExist = await fs.pathExists(templatesRoot);
 
   if (templatesExist) {
+    // Copiar el archivo de compose adecuado
+    if (options.composeTool === "podman") {
+      const podmanComposePath = path.join(templatesRoot, "podman-compose.yml");
+      if (await fs.pathExists(podmanComposePath)) {
+        await fs.copy(
+          podmanComposePath,
+          path.join(fullTarget, "podman-compose.yml"),
+          { overwrite: true }
+        );
+      }
+    } else {
+      // Por defecto docker
+      const dockerComposePath = path.join(templatesRoot, "docker-compose.yml");
+      if (await fs.pathExists(dockerComposePath)) {
+        await fs.copy(
+          dockerComposePath,
+          path.join(fullTarget, "docker-compose.yml"),
+          { overwrite: true }
+        );
+      }
+    }
     console.log(
       `ℹ️  Plantillas encontradas en ${templatesRoot} — copiando al destino...`
     );

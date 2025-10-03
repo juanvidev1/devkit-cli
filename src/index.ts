@@ -1,10 +1,14 @@
 // Importamos las librerías necesarias
+/// <reference types="node" />
 // Commander.js: Para crear CLIs con comandos, opciones y argumentos
 // Inquirer.js: Para hacer preguntas interactivas al usuario
 import { Command } from "commander";
 import inquirer from "inquirer";
 import path from "path";
 import generateFastapiReact, { generateExpressVue } from "./generator";
+// Asegura los tipos de Node para process y __dirname
+// @ts-ignore
+declare const __dirname: string;
 
 // Creamos una nueva instancia de Command
 // Esta será la base de nuestro CLI
@@ -34,6 +38,7 @@ program
     let dbUrl: string | undefined;
     let dbType: string | undefined;
     let useJwt = false;
+    let composeTool: "docker" | "podman" = "docker";
 
     if (options.skipQuestions) {
       projectName = "mi-proyecto";
@@ -41,6 +46,7 @@ program
       dbType = "sqlite";
       dbUrl = "sqlite+aiosqlite:///./data.db";
       useJwt = false; // o true si quieres JWT por defecto en modo rápido
+      composeTool = "docker";
       console.log("⚡ Usando configuración por defecto...");
     } else {
       console.log("🤖 Configuremos tu proyecto:\n");
@@ -92,6 +98,16 @@ program
           message: "¿Instalar dependencias ahora (npm install / pip install)?",
           default: false,
         },
+        {
+          type: "list",
+          name: "composeTool",
+          message: "¿Qué herramienta de orquestación quieres usar?",
+          choices: [
+            { name: "Docker Compose (por defecto)", value: "docker" },
+            { name: "Podman Compose", value: "podman" },
+          ],
+          default: "docker",
+        },
       ]);
 
       projectName = answers.projectName;
@@ -99,6 +115,7 @@ program
       useViteInstaller = answers.useViteInstaller;
       useJwt = answers.useJwt;
       runInstall = answers.runInstall;
+      composeTool = answers.composeTool as "docker" | "podman";
       // build database URL based on dbType
       dbType = answers.dbType || "sqlite";
       if (dbType === "sqlite") {
@@ -220,6 +237,7 @@ program
           dbUrl,
           dbType,
           useJwt,
+          composeTool,
         });
       } catch (err: any) {
         console.error("❌ Error al generar la plantilla:", err.message || err);
@@ -234,6 +252,7 @@ program
           dbUrl,
           dbType,
           useJwt,
+          composeTool,
         });
       } catch (err: any) {
         console.error("❌ Error al generar la plantilla:", err.message || err);
