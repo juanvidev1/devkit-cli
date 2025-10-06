@@ -60,3 +60,7 @@ tests/
 *.spec.py
 __tests__/
 __mocks__/
+my-*/**/*
+my-*/
+my-backend/
+my-frontend/
