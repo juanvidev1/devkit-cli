@@ -3,7 +3,7 @@ version: "3.8"
 services:
   backend:
     image: docker.io/library/python:3.11-slim
-    container_name: "${PROJECT_NAME:-stackforge}_backend"
+    container_name: "${PROJECT_NAME:-devkit}_backend"
     working_dir: /app
     volumes:
       - ./backend:/app:Z
@@ -14,7 +14,7 @@ services:
 
   frontend:
     image: docker.io/library/node:20-slim
-    container_name: "${PROJECT_NAME:-stackforge}_frontend"
+    container_name: "${PROJECT_NAME:-devkit}_frontend"
     working_dir: /src
     volumes:
       - ./frontend:/src:Z
@@ -25,7 +25,7 @@ services:
 
   postgres:
     image: docker.io/library/postgres:15
-    container_name: "${PROJECT_NAME:-stackforge}_postgres"
+    container_name: "${PROJECT_NAME:-devkit}_postgres"
     environment:
       POSTGRES_USER: "${POSTGRES_USER:-user}"
       POSTGRES_PASSWORD: "${POSTGRES_PASSWORD:-password}"
@@ -40,7 +40,7 @@ services:
 
   mysql:
     image: docker.io/library/mysql:8
-    container_name: "${PROJECT_NAME:-stackforge}_mysql"
+    container_name: "${PROJECT_NAME:-devkit}_mysql"
     environment:
       MYSQL_ROOT_PASSWORD: "${MYSQL_ROOT_PASSWORD:-rootpass}"
       MYSQL_DATABASE: "${MYSQL_DATABASE:-mydb}"

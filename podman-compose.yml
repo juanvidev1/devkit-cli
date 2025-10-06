@@ -13,7 +13,7 @@ services:
   backend:
     # Absolute image reference so Podman resolves the registry explicitly
     image: docker.io/library/python:3.11-slim
-    container_name: "${PROJECT_NAME:-stackforge}_backend"
+    container_name: "${PROJECT_NAME:-devkit}_backend"
     working_dir: /app
     volumes:
       # mount the backend folder from the generated project into /app
@@ -33,14 +33,14 @@ services:
       - "5173:5173"
     # Use the dev server so you have HMR during development; adjust to `npm run build` + a static server for prod
     command: sh -c "npm install --no-audit --no-fund && npm run dev -- --host 0.0.0.0 --port 5173"
-    container_name: "${PROJECT_NAME:-stackforge}_frontend"
+    container_name: "${PROJECT_NAME:-devkit}_frontend"
     restart: unless-stopped
 
   # Optional Postgres service. Activate with the "postgres" profile:
   #   podman-compose --profile postgres up --build
   postgres:
     image: docker.io/library/postgres:15
-    container_name: "${PROJECT_NAME:-stackforge}_postgres"
+    container_name: "${PROJECT_NAME:-devkit}_postgres"
     environment:
       POSTGRES_USER: "${POSTGRES_USER:-user}"
       POSTGRES_PASSWORD: "${POSTGRES_PASSWORD:-password}"
@@ -57,7 +57,7 @@ services:
   #   podman-compose --profile mysql up --build
   mysql:
     image: docker.io/library/mysql:8
-    container_name: "${PROJECT_NAME:-stackforge}_mysql"
+    container_name: "${PROJECT_NAME:-devkit}_mysql"
     environment:
       MYSQL_ROOT_PASSWORD: "${MYSQL_ROOT_PASSWORD:-rootpass}"
       MYSQL_DATABASE: "${MYSQL_DATABASE:-mydb}"
