@@ -19,7 +19,9 @@ npm install -g devkit-cli
 
 ## Quick Usage
 
-Create a new project interactively:
+### Fullstack Projects
+
+Create a complete fullstack project interactively:
 
 ```sh
 devkit create
@@ -31,17 +33,64 @@ Or skip questions and use default values:
 devkit create --skip-questions
 ```
 
+### Frontend Only
+
+Generate just the frontend (React or Vue):
+
+```sh
+devkit create --frontend-only
+```
+
+With default settings:
+
+```sh
+devkit create --frontend-only --skip-questions
+```
+
+### Backend Only
+
+Generate just the backend (FastAPI or Express):
+
+```sh
+devkit create --backend-only
+```
+
+With default settings:
+
+```sh
+devkit create --backend-only --skip-questions
+```
+
 ### Main Options
 
-- `--with-podman` Automatically starts the project with podman-compose after generation.
-- `--skip-questions` Uses default configuration without interactive prompts.
+- `--frontend-only` Generate frontend only (React or Vue)
+- `--backend-only` Generate backend only (FastAPI or Express)
+- `--with-podman` Automatically starts the project with podman-compose after generation
+- `--skip-questions` Uses default configuration without interactive prompts
 
 ## What does it generate?
 
-- FastAPI (Python) or Express (Node.js) backend, both with example CRUD, optional JWT authentication, and support for SQLite, Postgres, MySQL, or MongoDB
-- React (Vite) or Vue (Vite) frontend, with login example, CRUD, and protected route consumption
-- Configuration files for local development and containers (Podman/Docker)
-- `.gitignore` and professional structure for each stack part
+### Fullstack Projects
+- FastAPI (Python) or Express (Node.js) backend with example CRUD, optional JWT authentication, and database support
+- React (Vite) or Vue (Vite) frontend with login example, CRUD, and protected route consumption
+- Complete project structure with both frontend and backend
+
+### Frontend Only
+- React (Vite) or Vue (Vite) project with modern tooling
+- Dockerfile and docker-compose.yml/podman-compose.yml for containerized development
+- Professional project structure and configuration
+
+### Backend Only
+- FastAPI (Python) or Express (Node.js) API with CORS enabled
+- Database support: SQLite, PostgreSQL, MySQL, or MongoDB
+- Optional JWT authentication system
+- Dockerfile and compose files with database services
+- Environment configuration and professional structure
+
+### Common Features
+- Configuration files for local development and containers (Docker/Podman)
+- `.gitignore` and professional project structure
+- Ready-to-use development environment
 
 ## Requirements
 
@@ -49,36 +98,83 @@ devkit create --skip-questions
 - Podman and podman-compose (optional, only if you use `--with-podman`)
 - Python 3.10+ (for backend)
 
-## Example workflow
+## Example Workflows
+
+### Fullstack Project
 
 ```sh
-# 1. Create the project
+# 1. Create the fullstack project
 devkit create
 
 # 2. Enter the generated folder
 cd my-project
 
-# 3. (Optional) Start everything with Podman
+# 3. Start everything with Docker/Podman
+docker-compose up --build
+# or
 podman-compose up --build
 
 # 4. Access backend at http://localhost:8000 and frontend at http://localhost:5173
 ```
 
+### Frontend Only
+
+```sh
+# 1. Create React frontend
+devkit create --frontend-only
+
+# 2. Enter the generated folder
+cd my-frontend
+
+# 3. Start development server
+npm run dev
+# or with containers
+docker-compose up
+
+# 4. Access frontend at http://localhost:5173
+```
+
+### Backend Only
+
+```sh
+# 1. Create FastAPI backend
+devkit create --backend-only
+
+# 2. Enter the generated folder
+cd my-backend
+
+# 3. Start with containers (includes database)
+docker-compose up --build
+
+# 4. Access API at http://localhost:8000
+# 5. View docs at http://localhost:8000/docs
+```
+
 ## Customization
 
-### Advanced customization
+### Project Types & Customization
 
-When creating a project, you can choose:
-
+#### Fullstack Projects
 - **Stack**: FastAPI + React or Express + Vue
-- **Database**: SQLite, Postgres, MySQL, or MongoDB
-  - For SQLite, no extra info is required
-  - For Postgres/MySQL: host, port, user, password, and database name
-  - For MongoDB: you can enter a full URI or provide details separately
-- **JWT Authentication**: include or skip an authentication example
-- **Frontend**: use the official Vite installer or the base template
+- **Database**: SQLite, PostgreSQL, MySQL, or MongoDB
+- **JWT Authentication**: Optional authentication system
+- **Frontend**: Official Vite installer or base template
 
-> **Note:** The generator creates `.env` files and ready-to-use requirements/configs for each stack and database.
+#### Frontend Only
+- **Framework**: React or Vue (both with Vite)
+- **Vite Installer**: Use official installer or base template
+- **Container Support**: Docker/Podman ready
+
+#### Backend Only
+- **Framework**: FastAPI (Python) or Express (Node.js)
+- **Database**: SQLite, PostgreSQL, MySQL, or MongoDB
+  - SQLite: No extra configuration needed
+  - PostgreSQL/MySQL: Host, port, user, password, database name
+  - MongoDB: Full URI or separate connection details
+- **JWT Authentication**: Optional JWT implementation
+- **Container Tool**: Docker Compose or Podman Compose
+
+> **Note:** All generators create `.env` files, Dockerfiles, compose files, and ready-to-use configurations for each technology stack.
 
 ## Contributing
 
