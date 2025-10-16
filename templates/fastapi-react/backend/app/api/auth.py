@@ -5,26 +5,21 @@ from app.core.jwt_utils import create_access_token
 
 router = APIRouter(prefix="/auth", tags=["auth"])
 
-
-# Demo user (hardcoded, bcrypt hash)
-FAKE_USER = {
-    "username": "demo",
-    # hash real generado con passlib: pwd_context.hash("password")
-    "hashed_password": "$2b$12$KIXIDiF1T8Q6Yb6vFQW1V.6QwQwQwQwQwQwQwQwQwQwQwQwQwQwQwQwQw",  # hash for "password"
-}
-
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
-def verify_password(plain_password, hashed_password):
-    # bcrypt solo usa los primeros 72 bytes
-    return pwd_context.verify(plain_password[:72], hashed_password)
+# Demo user (hardcoded, bcrypt hash for "password")
+FAKE_USER = {
+    "username": "demo",
+    "hashed_password": "$2b$12$EixZaYVK1fsbw1ZfbX3OXePaWxn96p36WQoeG6Lruj3vjPGga31lW",
+}
 
-def authenticate_user(username: str, password: str):
+def verify_password(plain_password: str, hashed_password: str) -> bool:
+    return pwd_context.verify(plain_password, hashed_password)
+
+def authenticate_user(username: str, password: str) -> bool:
     if username != FAKE_USER["username"]:
         return False
-    if not verify_password(password, FAKE_USER["hashed_password"]):
-        return False
-    return True
+    return verify_password(password, FAKE_USER["hashed_password"])
 
 @router.post("/token")
 def login(form_data: OAuth2PasswordRequestForm = Depends()):
