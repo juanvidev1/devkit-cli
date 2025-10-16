@@ -10,7 +10,7 @@ pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 # Demo user (hardcoded, bcrypt hash for "password")
 FAKE_USER = {
     "username": "demo",
-    "hashed_password": "$2b$12$EixZaYVK1fsbw1ZfbX3OXePaWxn96p36WQoeG6Lruj3vjPGga31lW",
+    "hashed_password": "$2b$12$LQv3c1yqBWVHxkd0LHAkCOYz6TtxMQJqhN8/LewdBPj3bp.Uix/qe",
 }
 
 def verify_password(plain_password: str, hashed_password: str) -> bool:
