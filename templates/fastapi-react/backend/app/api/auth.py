@@ -1,20 +1,18 @@
 from fastapi import APIRouter, HTTPException, status, Depends
 from fastapi.security import OAuth2PasswordRequestForm
-from passlib.context import CryptContext
+import hashlib
 from app.core.jwt_utils import create_access_token
 
 router = APIRouter(prefix="/auth", tags=["auth"])
 
-pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
-
-# Demo user (hardcoded, bcrypt hash for "password")
+# Demo user (hardcoded, SHA256 hash for "password")
 FAKE_USER = {
     "username": "demo",
-    "hashed_password": "$2b$12$LQv3c1yqBWVHxkd0LHAkCOYz6TtxMQJqhN8/LewdBPj3bp.Uix/qe",
+    "hashed_password": "5e884898da28047151d0e56f8dc6292773603d0d6aabbdd62a11ef721d1542d8",
 }
 
 def verify_password(plain_password: str, hashed_password: str) -> bool:
-    return pwd_context.verify(plain_password, hashed_password)
+    return hashlib.sha256(plain_password.encode()).hexdigest() == hashed_password
 
 def authenticate_user(username: str, password: str) -> bool:
     if username != FAKE_USER["username"]:
